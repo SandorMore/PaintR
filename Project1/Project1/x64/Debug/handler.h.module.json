@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\Handler.h.obj",
+            "outputs": [
+                "C:\\Users\\Sanyi\\Desktop\\PaintR\\Project1\\Project1\\x64\\Debug\\vc145.pdb",
+                "x64\\Debug\\",
+                "C:\\Users\\Sanyi\\Desktop\\PaintR\\Project1\\Project1\\x64\\Debug\\Handler.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "Handler.h",
+                    "source-path": "c:\\users\\sanyi\\desktop\\paintr\\project1\\project1\\handler.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}

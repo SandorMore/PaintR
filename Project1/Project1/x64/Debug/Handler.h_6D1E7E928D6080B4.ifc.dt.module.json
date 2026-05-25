@@ -1,0 +1,22 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Debug\\Handler.obj",
+            "outputs": [
+                "x64\\Debug\\Handler.h_6D1E7E928D6080B4.ifc.dt.module.json",
+                "x64\\Debug\\Handler.h_6D1E7E928D6080B4.ifc.dt.d.json",
+                "x64\\Debug\\Handler.h.ifc"
+            ],
+            "provides": [
+                {
+                    "logical-name": "C:\\Users\\Sanyi\\Desktop\\PaintR\\Project1\\Project1\\Handler.h",
+                    "source-path": "c:\\users\\sanyi\\desktop\\paintr\\project1\\project1\\handler.h",
+                    "lookup-method": "absolute"
+                }
+            ],
+            "requires": []
+        }
+    ]
+}
