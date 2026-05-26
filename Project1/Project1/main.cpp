@@ -11,10 +11,6 @@
 
 bool close = false;
 
-void handle_input() {
-
-}
-
 int main(int argc, char** argv) {
 	
 	auto start = std::chrono::high_resolution_clock::now();
@@ -27,7 +23,7 @@ int main(int argc, char** argv) {
 
 	}
 
-	SDL_Window* window = SDL_CreateWindow("PaintR", 100, 100, 1280, 720, 0);
+	SDL_Window* window = SDL_CreateWindow("PaintR", 0, 0, WIDTH, HEIGHT, 0);
 	SDL_Renderer* renderer = SDL_CreateRenderer(window, 0, SDL_RENDERER_ACCELERATED);
 
 	Handler handler{window, renderer};
