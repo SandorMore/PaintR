@@ -22,28 +22,27 @@ public:
             SDL_TEXTUREACCESS_STREAMING, WIDTH, HEIGHT);
     }
 
-    void fill(Color c = { 0, 0, 0 }) {
+    void fill(Color c = { 0, 0, 0 }) 
+    {
         for (int i = 0; i < WIDTH * HEIGHT; i++)
             pixels[i] = c;
     }
 
-    void setPixel(int x, int y, Color c) {
+    void setPixel(int x, int y, Color c) 
+    {
         if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
             pixels[y * WIDTH + x] = c;
-    }
-
-    void __cdecl color_pixel() {
-        for (size_t y = 0; y < HEIGHT; ++y) {
-            for (size_t x = 0; x < WIDTH; ++x) {
-
-            }
-        }
     }
 
     void render() {
         SDL_UpdateTexture(texture, nullptr, pixels, WIDTH * sizeof(Color));
         SDL_RenderCopy(renderer, texture, nullptr, nullptr);
         SDL_RenderPresent(renderer);
+    }
+
+    void __cdecl mouse_action() 
+    {
+        pixels[mouse.y * WIDTH + mouse.x] = { 123, 220, 23 };
     }
 
     void entry() {
@@ -56,16 +55,17 @@ public:
                     mouse.x = event.motion.x;
                     mouse.y = event.motion.y;
                 }
+                if (event.type == SDL_MOUSEBUTTONDOWN) {
+                    mouse_action();
+                }
             }
-
-            fill();
-            setPixel(mouse.x, mouse.y, { 255, 255, 255 });
-
+            printf("Mouse y: %d, mouse x: %d\n", mouse.y, mouse.x);
             render();
         }
     }
 
-    ~Handler() {
+    ~Handler() 
+    {
         delete[] pixels;
         SDL_DestroyTexture(texture);
         SDL_DestroyRenderer(renderer);
