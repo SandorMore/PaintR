@@ -1,99 +1,83 @@
 #include <SDL2/SDL_main.h>
 #include <SDL2/SDL.h>
 
-constexpr inline int WIDTH = 1920;
-constexpr inline int HEIGHT = 1080;
+constexpr int WIDTH = 1920;
+constexpr int HEIGHT = 1080;
 
+struct Mouse {
+    int x = 0, y = 0;
+};
 
-typedef struct {
-	int mouseX;
-	int mouseY;
-} Mouse;
-
-typedef struct {
-	uint8_t r, g, b;
-} Color;
+struct Color {
+    uint8_t r, g, b;
+};
 
 class Handler {
 public:
-	Handler(SDL_Window* _window, SDL_Renderer* _renderer) :window(_window), renderer(_renderer) 
-	{
-		mouse = new Mouse;
-		mouse->mouseX = 0;
-		mouse->mouseY = 0;
+    Handler(SDL_Window* _window, SDL_Renderer* _renderer)
+        : window(_window), renderer(_renderer)
+    {
+        pixels = new Color[WIDTH * HEIGHT];
+        texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
+            SDL_TEXTUREACCESS_STREAMING, WIDTH, HEIGHT);
+    }
 
-		pixels = new Color * [HEIGHT];
-		for (int i = 0; i < HEIGHT; i++)
-			pixels[i] = new Color[WIDTH];
-	}
+    void fill(Color c = { 0, 0, 0 }) {
+        for (int i = 0; i < WIDTH * HEIGHT; i++)
+            pixels[i] = c;
+    }
 
-	void fill() 
-	{
-		for (size_t y = 0; y < HEIGHT; ++y) 
-		{
-			for (size_t x = 0; x < WIDTH; ++x) 
-			{
-				pixels[y][x] = { 0,0,0 };
-			}
-		}
-	}
+    void setPixel(int x, int y, Color c) {
+        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT)
+            pixels[y * WIDTH + x] = c;
+    }
 
-	void render(SDL_Renderer* renderer) 
-	{
-		for (size_t y = 0; y < HEIGHT; ++y)
-		{
-			for (size_t x = 0; x < WIDTH; ++x)
-			{
-				Color& c = pixels[y][x];
+    void __cdecl color_pixel() {
+        for (size_t y = 0; y < HEIGHT; ++y) {
+            for (size_t x = 0; x < WIDTH; ++x) {
 
-				SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, 255);
-				SDL_RenderDrawPoint(renderer, x, y);
-			}
-		}
+            }
+        }
+    }
 
-		SDL_RenderPresent(renderer);
+    void render() {
+        SDL_UpdateTexture(texture, nullptr, pixels, WIDTH * sizeof(Color));
+        SDL_RenderCopy(renderer, texture, nullptr, nullptr);
+        SDL_RenderPresent(renderer);
+    }
 
-	}
+    void entry() {
+        fill();
+        while (!close) {
+            while (SDL_PollEvent(&event)) {
+                if (event.type == SDL_QUIT) close = true;
+                if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE) close = true;
+                if (event.type == SDL_MOUSEMOTION) {
+                    mouse.x = event.motion.x;
+                    mouse.y = event.motion.y;
+                }
+            }
 
-	void entry() 
-	{
-		fill();
-		while(!close)
-		{
-			
-			while (SDL_PollEvent(&event)) 
-			{
-				if (event.type == SDL_QUIT)
-					close = true;
+            fill();
+            setPixel(mouse.x, mouse.y, { 255, 255, 255 });
 
-				if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
-					close = true;
-			}
+            render();
+        }
+    }
 
-			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-			SDL_RenderClear(renderer);
+    ~Handler() {
+        delete[] pixels;
+        SDL_DestroyTexture(texture);
+        SDL_DestroyRenderer(renderer);
+        SDL_DestroyWindow(window);
+    }
 
-
-			render(renderer);
-		}
-	}
-	~Handler() 
-	{
-		SDL_DestroyWindow(window);
-		SDL_DestroyRenderer(renderer);
-		
-		for (int i = 0; i < HEIGHT; i++)
-			delete[] pixels[i];
-		delete[] pixels;
-
-		delete mouse;
-		mouse = nullptr;
-	}
 private:
-	SDL_Window* window;
-	SDL_Renderer* renderer;
-	Mouse* mouse;
-	SDL_Event event;
-	bool close = false;
-	Color** pixels;
+    SDL_Window* window;
+    SDL_Renderer* renderer;
+    SDL_Texture* texture;
+    SDL_Event event;
+    Mouse mouse;
+    Color* pixels;
+    bool close = false;
 };
