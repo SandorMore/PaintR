@@ -6,6 +6,7 @@ constexpr int HEIGHT = 1080;
 
 struct Mouse {
     int x = 0, y = 0;
+    unsigned size = 1;
 };
 
 struct Color {
@@ -20,6 +21,9 @@ public:
         pixels = new Color[WIDTH * HEIGHT];
         texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGB24,
             SDL_TEXTUREACCESS_STREAMING, WIDTH, HEIGHT);
+
+        //test
+        mouse.size = 100;
     }
 
     void fill(Color c = { 0, 0, 0 }) 
@@ -40,9 +44,20 @@ public:
         SDL_RenderPresent(renderer);
     }
 
-    void __cdecl mouse_action() 
+    void __cdecl mouse_action(unsigned int size)
     {
-        pixels[mouse.y * WIDTH + mouse.x] = { 123, 220, 23 };
+        if (size == 0) size = 1;
+
+        for (unsigned int i = 0; i < size; ++i)
+        {
+            if (mouse.y >= HEIGHT) continue;
+
+            if (mouse.x + i < WIDTH)
+                pixels[mouse.y * WIDTH + mouse.x + i] = { 255, 255, 255 };
+
+            if (mouse.x >= i)
+                pixels[mouse.y * WIDTH + (mouse.x - i)] = { 255, 255, 255 };
+        }
     }
 
     void entry() {
@@ -55,11 +70,12 @@ public:
                     mouse.x = event.motion.x;
                     mouse.y = event.motion.y;
                 }
-                if (event.type == SDL_MOUSEBUTTONDOWN) {
-                    mouse_action();
+                if (event.type == SDL_MOUSEBUTTONDOWN || SDL_GetMouseState(&(mouse.x), &(mouse.y)) & SDL_BUTTON_LMASK) {
+                    mouse_action(mouse.size);
                 }
             }
             printf("Mouse y: %d, mouse x: %d\n", mouse.y, mouse.x);
+            
             render();
         }
     }

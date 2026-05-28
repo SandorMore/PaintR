@@ -9,6 +9,8 @@
 #include <thread>
 #include <chrono>
 
+Color userColor;
+
 bool close = false;
 
 int main(int argc, char** argv) {
